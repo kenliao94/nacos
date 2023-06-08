@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -62,6 +63,20 @@ public class NetUtilsTest {
         InetAddress inetAddress = invokeGetInetAddress();
         String ip = inetAddress.getHostAddress();
         assertEquals(ip, NetUtils.localIP());
+    }
+
+    @Test
+    public void testLocalIpWithChangedIpvPreference() throws Exception {
+        InetAddress inetAddressIpv4 = null;
+        InetAddress inetAddressIpv6 = null;
+
+        System.setProperty("java.net.preferIPv6Addresses", "false");
+        inetAddressIpv4 = invokeGetInetAddress();
+
+        System.setProperty("java.net.preferIPv6Addresses", "true");
+        inetAddressIpv6 = invokeGetInetAddress();
+
+        assertNotEquals(inetAddressIpv4.getHostAddress(), inetAddressIpv6.getHostAddress());
     }
     
     @Test
